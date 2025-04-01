@@ -1,0 +1,14 @@
+{
+    # Habilitar compresión gzip
+    encode gzip
+}
+
+# Usar el puerto proporcionado por Railway
+:{$PORT} {
+    # Servir archivos estáticos
+    root * /srv
+    file_server
+
+    # Manejar rutas para SPA
+    try_files {path} /index.html
+}
