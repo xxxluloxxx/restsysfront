@@ -7,3 +7,6 @@ startCommand = "npm run preview"
 healthcheckPath = "/"
 healthcheckTimeout = 100
 restartPolicyType = "on_failure"
+
+[phases.setup]
+nixPkgs = ["nodejs", "npm"]
