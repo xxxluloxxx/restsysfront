@@ -1,5 +1,6 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import { authGuard } from './auth-guard';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -169,7 +170,6 @@ const router = createRouter({
             name: 'notfound',
             component: () => import('@/views/pages/NotFound.vue')
         },
-
         {
             path: '/auth/login',
             name: 'login',
@@ -187,5 +187,8 @@ const router = createRouter({
         }
     ]
 });
+
+// Aplicar el guard global
+router.beforeEach(authGuard);
 
 export default router;
