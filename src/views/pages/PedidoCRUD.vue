@@ -26,6 +26,10 @@ const options = [
     { label: 'Todos', value: '2' }
 ];
 
+onMounted(() => {
+    cargarDatos();
+});
+
 function cargarDatos() {
     loading.value = true;
     switch (activeTab.value) {
@@ -78,10 +82,6 @@ function onOptionChange(event) {
     activeTab.value = event.value;
     cargarDatos();
 }
-
-onMounted(() => {
-    cargarDatos();
-});
 
 function formatCurrency(value) {
     if (value) return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });

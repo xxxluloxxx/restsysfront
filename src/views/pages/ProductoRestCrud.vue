@@ -42,7 +42,9 @@ function formatCurrency(value) {
 }
 
 function openNew() {
-    producto.value = {};
+    producto.value = {
+        disponible: true
+    };
     submitted.value = false;
     productDialog.value = true;
 }
@@ -52,32 +54,49 @@ function hideDialog() {
     submitted.value = false;
 }
 
+function loadProducts() {
+    loading.value = true;
+    ProductoService.getAll()
+        .then((productosData) => {
+            products.value = productosData;
+        })
+        .catch((error) => {
+            console.error('Error al cargar los productos:', error);
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Error al cargar los productos', life: 3000 });
+        })
+        .finally(() => {
+            loading.value = false;
+        });
+}
+
 function saveProduct() {
     submitted.value = true;
 
     if (producto?.value.nombre?.trim()) {
-        const productoData = {
-            codigo: producto.value.codigo,
+        const productoDataGuardar = {
+            categoria: {
+                id: producto.value.categoria.id
+            },
             nombre: producto.value.nombre,
             descripcion: producto.value.descripcion,
             precio: producto.value.precio,
-            categoria: producto.value.categoria
+            disponible: producto.value.disponible
         };
 
         if (producto.value.id) {
-            updateProduct(productoData);
+            updateProduct(productoDataGuardar);
         } else {
-            createProduct(productoData);
+            createProduct(productoDataGuardar);
         }
     }
 }
 
 function createProduct(productoData) {
     ProductoService.create(productoData)
-        .then((response) => {
-            products.value.push(response);
+        .then(() => {
             productDialog.value = false;
             producto.value = {};
+            loadProducts();
             toast.add({ severity: 'success', summary: 'Éxito', detail: 'Producto Creado', life: 3000 });
         })
         .catch((error) => {
@@ -151,7 +170,8 @@ function exportCSV() {
                 :value="products"
                 dataKey="id"
                 :paginator="true"
-                scrollable scrollHeight="600px"
+                scrollable
+                scrollHeight="600px"
                 :rows="10"
                 :filters="filters"
                 :loading="loading"
