@@ -33,6 +33,7 @@ function cargarDatos() {
             PedidoService.getAllFecha()
                 .then((data) => {
                     pedidos.value = data;
+                    expandAll();
                 })
                 .catch((error) => {
                     console.error('Error al cargar los pedidos:', error);
@@ -46,6 +47,7 @@ function cargarDatos() {
             PedidoService.getAllUltimosDias()
                 .then((data) => {
                     pedidos.value = data;
+                    expandAll();
                 })
                 .catch((error) => {
                     console.error('Error al cargar los pedidos:', error);
@@ -59,6 +61,7 @@ function cargarDatos() {
             PedidoService.getAllDetalles()
                 .then((data) => {
                     pedidos.value = data;
+                    expandAll();
                 })
                 .catch((error) => {
                     console.error('Error al cargar los pedidos:', error);
@@ -85,18 +88,12 @@ function formatCurrency(value) {
     return;
 }
 
-function openNew() {
-    pedido.value = {};
-    submitted.value = false;
-    pedidotDialog.value = true;
-}
-
 function hideDialog() {
     pedidotDialog.value = false;
     submitted.value = false;
 }
 
-function saveProduct() {
+function savePedido() {
     submitted.value = true;
 
     if (pedido?.value.nombre?.trim()) {
@@ -195,16 +192,11 @@ function findIndexById(id) {
             break;
         }
     }
-
     return index;
 }
 
 function exportCSV() {
     dt.value.exportCSV();
-}
-
-function confirmDeleteSelected() {
-    deletePedidosDialog.value = true;
 }
 
 function deleteSelectedProducts() {
@@ -235,22 +227,19 @@ function getEstadoSeverity(estado) {
             return null;
     }
 }
+
+function expandAll() {
+    expandedRows.value = pedidos.value.reduce((acc, p) => (acc[p.id] = true) && acc, {});
+}
+
+function collapseAll() {
+    expandedRows.value = {};
+}
 </script>
 
 <template>
     <div>
         <div class="card">
-            <Toolbar class="mb-6">
-                <template #start>
-                    <Button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
-                    <Button label="Delete" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected" :disabled="!selectedPedidos || !selectedPedidos.length" />
-                </template>
-
-                <template #end>
-                    <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
-                </template>
-            </Toolbar>
-
             <DataTable
                 v-model:expandedRows="expandedRows"
                 :value="pedidos"
@@ -275,12 +264,19 @@ function getEstadoSeverity(estado) {
                     </div>
                     <div class="flex flex-wrap gap-2 items-center justify-between">
                         <SelectButton v-model="activeTab" :options="options" optionLabel="label" optionValue="value" @change="onOptionChange" />
-                        <IconField>
-                            <InputIcon>
-                                <i class="pi pi-search" />
-                            </InputIcon>
-                            <InputText v-model="filters['global'].value" placeholder="Search..." />
-                        </IconField>
+                        <div class="flex flex-wrap justify-end gap-2">
+                            <Button text icon="pi pi-plus" label="Expand All" @click="expandAll" />
+                            <Button text icon="pi pi-minus" label="Collapse All" @click="collapseAll" />
+                        </div>
+                        <div class="flex align-items-center gap-3">
+                            <IconField>
+                                <InputIcon>
+                                    <i class="pi pi-search" />
+                                </InputIcon>
+                                <InputText v-model="filters['global'].value" placeholder="Search..." />
+                            </IconField>
+                            <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
+                        </div>
                     </div>
                 </template>
 
@@ -309,9 +305,9 @@ function getEstadoSeverity(estado) {
                     </template>
                 </Column>
                 <template #expansion="slotProps">
-                    <div class="p-4">
-                        <h5>Productos del pedido</h5>
-                        <DataTable :value="slotProps.data.detalles">
+                    <div class="p-4 bg-gray-50 dark:bg-gray-800">
+                        <h5 class="text-gray-900 dark:text-gray-100">Productos del pedido</h5>
+                        <DataTable :value="slotProps.data.detalles" class="bg-gray-50 dark:bg-gray-800">
                             <Column field="nombreProducto" header="Producto" sortable></Column>
                             <Column field="precioUnitario" header="Precio" sortable>
                                 <template #body="slotProps">
@@ -363,7 +359,7 @@ function getEstadoSeverity(estado) {
 
             <template #footer>
                 <Button label="Cancelar" icon="pi pi-times" text @click="hideDialog" />
-                <Button label="Guardar" icon="pi pi-check" @click="saveProduct" />
+                <Button label="Guardar" icon="pi pi-check" @click="savePedido" />
             </template>
         </Dialog>
 
