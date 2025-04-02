@@ -26,7 +26,8 @@ const API_CONFIG = {
         DETALLES_PEDIDOS: '/api/detalles-pedido',
         MENU1: '/api/menu/menu1',
         MENU2: '/api/menu/menu2',
-        LOGIN: '/api'
+        LOGIN: '/api',
+        NOTIFICACIONES: '/api/notificaciones'
 
     },
 

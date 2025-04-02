@@ -10,6 +10,12 @@ const router = createRouter({
             redirect: '/auth/login'
         },
         {
+            path: '/mesa/:mesaId',
+            name: 'mesa-solicitud',
+            component: () => import('@/views/MeseroSolicitud.vue'),
+            meta: { requiresAuth: false }
+        },
+        {
             path: '/dashboard',
             component: AppLayout,
             children: [
