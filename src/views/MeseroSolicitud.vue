@@ -21,14 +21,14 @@ function createNotificacion() {
     };
     NotificacionService.create(notificacionData)
         .then(() => {
-            toast.add({ severity: 'success', summary: 'Éxito', detail: 'Categoria creada', life: 3000 });
+            solicitudEnviada.value = true;
+            toast.add({ severity: 'success', summary: 'Éxito', detail: 'Solicitud enviada correctamente', life: 3000 });
         })
         .catch((error) => {
-            console.error('Error al crear la categoria:', error);
-            toast.add({ severity: 'error', summary: 'Error', detail: 'Error al crear la categoria', life: 3000 });
+            console.error('Error al crear la notificación:', error);
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Error al enviar la solicitud', life: 3000 });
         });
 }
-
 </script>
 
 <template>
@@ -39,7 +39,13 @@ function createNotificacion() {
             <div class="flex flex-col items-center space-y-6">
                 <div class="text-center">
                     <p class="text-gray-600 mb-4">¿Necesitas ayuda?</p>
-                    <button @click="createNotificacion" class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-lg text-xl transition-colors duration-200 transform hover:scale-105">Solicitar Mesero</button>
+                    <button
+                        @click="createNotificacion"
+                        :disabled="solicitudEnviada"
+                        class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-lg text-xl transition-colors duration-200 transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    >
+                        {{ solicitudEnviada ? 'Solicitud Enviada' : 'Solicitar Mesero' }}
+                    </button>
                 </div>
 
                 <div v-if="solicitudEnviada" class="mt-4 p-4 bg-green-100 text-green-700 rounded-lg">
