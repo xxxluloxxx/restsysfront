@@ -1,14 +1,11 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { useAuthStore } from '@/stores/auth';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import AppConfigurator from './AppConfigurator.vue';
 
 const router = useRouter();
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
-const showProfileMenu = ref(false);
-const authStore = useAuthStore();
 
 // Estado del usuario desde localStorage
 const user = ref({
@@ -18,7 +15,6 @@ const user = ref({
 
 const handleLogout = () => {
     localStorage.removeItem('userData');
-    authStore.clearUserData();
     router.push('/auth/login');
 };
 
